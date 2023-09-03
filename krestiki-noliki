@@ -1,0 +1,93 @@
+def create_matrix():
+    matrix = []
+    for i in range(4):
+        temp = ['-' for i in range(4)]
+        matrix.append(temp)
+    edges(matrix)
+    return matrix
+
+def edges(m):
+    for i in range(1, 4):
+        m[0][i] = i
+        m[i][0] = i
+    m[0][0] = ' '
+    return m
+
+def show_matrix(m):
+    for i in range(len(m)):
+        print(*m[i], end='')
+        print()
+
+def check_coord(x, m):
+    if len(x) != 2:
+        return False
+    elif x[0] > 3 or x[0] < 1 or x[1] > 3 or x[1] < 1:
+        return False
+    elif m[x[0]][x[1]] != '-':
+        return False
+    else:
+        return True
+
+def check_win(h, c):
+    count = 0
+    count1 = 0
+    win_tuple = (((1, 1), (1, 2), (1, 3)), ((2, 1), (2, 2), (2, 3)), ((3, 1), (3, 2), (3, 3)), ((1, 1), (2, 1), (3, 1)), ((1, 2), (2, 2), (3, 2)), ((1, 3), (2, 3), (3, 3)), ((1, 1), (2, 2), (3, 3)), ((1, 3), (2, 2), (3, 1)))
+    for i in range(len(win_tuple)):
+        for j in range(0, len(h), 2):
+            if h[j] in win_tuple[i]:
+                count += 1
+                if count == 3:
+                    print('Крестики победили!')
+                    return True
+            else:
+                break
+        for f in range(1, len(h), 2):
+            if h[f] in win_tuple[i]:
+                count1 += 1
+                if count1 == 3:
+                    print('Нолики победили!')
+                    return True
+            else:
+                break
+        count = 0
+        count1 = 0
+    if c == 9:
+        print('Ничья!')
+        return True
+
+
+
+def play():
+    print('Игра Крестики-нолики началась!')
+    print()
+    matrix = create_matrix()
+    show_matrix(matrix)
+    text1 = 'крестиков'
+    text2 = 'ноликов'
+    text3 = 'X'
+    text4 = '0'
+    counter = 0
+    history = ()
+    while True:
+        a = input(f'Ход {text1}, введите координаты через пробел: ')
+        coordinates = a.split()
+        coordinates = list(map(int, coordinates))
+        if check_coord(coordinates, matrix):
+            history += (tuple(coordinates),)
+            matrix[coordinates[0]][coordinates[1]] = text3
+            show_matrix(matrix)
+            counter += 1
+            if counter >= 5:
+                if check_win(history, counter):
+                    break
+        else:
+            print('Введены неверные координаты')
+            continue
+        text1, text2 = text2, text1
+        text3, text4 = text4, text3
+    ans = input('Хотите начать новую игру? Y - Да, N - Нет: ')
+    if 'y' in ans.lower():
+        play()
+    else:
+        print('Хорошего вечера!')
+play()
